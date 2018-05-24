@@ -14,6 +14,8 @@ MAKEFILE_INC=makefile.inc
 PREFIX ?= /usr/local/
 
 all: .env_ok libfaiss.a demos/demo_ivfpq_indexing
+all: .env_ok libfaiss.a demos/demo_sift1M
+all: .env_ok libfaiss.a demos/nn
 
 py: _swigfaiss.so
 
@@ -30,7 +32,7 @@ LIBOBJ=hamming.o  utils.o \
        PolysemousTraining.o MetaIndexes.o Index.o \
        ProductQuantizer.o AutoTune.o AuxIndexStructures.o \
        IndexScalarQuantizer.o FaissException.o IndexHNSW.o \
-       IndexIVFFlat.o OnDiskInvertedLists.o
+       IndexIVFFlat.o OnDiskInvertedLists.o args.o
 
 
 libfaiss.a: $(LIBOBJ)
@@ -66,6 +68,9 @@ demos/demo_ivfpq_indexing: demos/demo_ivfpq_indexing.cpp libfaiss.a
 	$(CXX) -o $@ $(CXXFLAGS) $< libfaiss.a $(LDFLAGS) $(BLASLDFLAGS)
 
 demos/demo_sift1M: demos/demo_sift1M.cpp libfaiss.a
+	$(CXX) -o $@ $(CXXFLAGS) $< libfaiss.a $(LDFLAGS) $(BLASLDFLAGS)
+
+demos/nn: demos/nn.cpp libfaiss.a 
 	$(CXX) -o $@ $(CXXFLAGS) $< libfaiss.a $(LDFLAGS) $(BLASLDFLAGS)
 
 
@@ -155,6 +160,7 @@ IndexIVFFlat.o: IndexIVFFlat.cpp IndexIVFFlat.h IndexIVF.h Index.h \
  AuxIndexStructures.h
 OnDiskInvertedLists.o: OnDiskInvertedLists.cpp OnDiskInvertedLists.h \
  IndexIVF.h Index.h Clustering.h Heap.h FaissAssert.h FaissException.h
+args.o: args.cc args.h
 
 installdirs:
 	mkdir -p $(DESTDIR)$(PREFIX)/lib $(DESTDIR)$(PREFIX)/include/faiss
