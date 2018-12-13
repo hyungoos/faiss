@@ -158,7 +158,7 @@ int main(int argc, char** argv) {
     }
     while (processed < n) {
         // search xq
-        nq = std::min(batchSize, nt - processed);
+        nq = std::min(batchSize, n - processed);
         next_batch(queryStream, batchSize, &dim, xq);
         // TODO: read from file to get xt
         index->search(nq, xq, k, D, I);
