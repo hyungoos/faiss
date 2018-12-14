@@ -174,7 +174,7 @@ int main(int argc, char** argv) {
         // TODO: read from file to get xt
         index->search(nq, xq, k, D, I);
 
-        # print ids and distances
+        // print ids and distances
         for(int i = 0; i < nq; i++) {
             query_word = query_words[i];
             ofs << query_word << " ";
