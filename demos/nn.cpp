@@ -176,7 +176,7 @@ int main(int argc, char** argv) {
 
         // print ids and distances
         for(int i = 0; i < nq; i++) {
-            query_word = query_words[i];
+            std::string query_word = query_words[i];
             ofs << query_word << " ";
             dist_ofs << query_word << " ";
             for(int j = 0; j < k; j++) {
