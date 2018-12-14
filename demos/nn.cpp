@@ -64,10 +64,12 @@ std::ifstream initialize_vecs_read_batch (std::string fname, size_t *dim, size_t
     return in;
 }
 
-void next_batch (std::ifstream& in, int batchSize, size_t *dim, float *x) {
+void next_batch (std::ifstream& in, int batchSize, size_t *dim, float *x, std::vector<std::string> *words) {
+    words->clear();
     for (size_t i = 0; i < batchSize; i++) {
         std::string word;
         in >> word; // word is discarded
+        words->push_back(word);
         for (size_t j = 0; j < *dim; j++) {
             in >> x[*dim * i + j];
         }
@@ -162,15 +164,21 @@ int main(int argc, char** argv) {
         throw std::invalid_argument(
             "outPath.distance cannot be opened for saving distances!");
     }
+
+    std::vector<std::string> query_words;
     while (processed < n) {
         // search xq
         nq = std::min(batchSize, n - processed);
-        next_batch(queryStream, batchSize, &dim, xq);
+
+        next_batch(queryStream, batchSize, &dim, xq, &query_words);
         // TODO: read from file to get xt
         index->search(nq, xq, k, D, I);
 
         # print ids and distances
         for(int i = 0; i < nq; i++) {
+            query_word = query_words[i];
+            ofs << query_word << " ";
+            dist_ofs << query_word << " ";
             for(int j = 0; j < k; j++) {
                 ofs << words[I[i * k + j]] << " ";
                 dist_ofs << D[i * k + j] << " ";
@@ -190,5 +198,3 @@ int main(int argc, char** argv) {
     printf ("[%.3f s] Total\n", elapsed() - t0);
     return 0;
 }
-
-
