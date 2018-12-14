@@ -152,9 +152,15 @@ int main(int argc, char** argv) {
     float *D = new float[k * batchSize];
     size_t processed = 0;
     std::ofstream ofs(args_.output);
+    std::ofstream dist_ofs(args_.output + ".distance");
+
     if (!ofs.is_open()) {
         throw std::invalid_argument(
             "outPath cannot be opened for saving vectors!");
+    }
+    if (!dist_ofs.is_open()) {
+        throw std::invalid_argument(
+            "outPath.distance cannot be opened for saving distances!");
     }
     while (processed < n) {
         // search xq
@@ -162,11 +168,16 @@ int main(int argc, char** argv) {
         next_batch(queryStream, batchSize, &dim, xq);
         // TODO: read from file to get xt
         index->search(nq, xq, k, D, I);
+
+        # print ids and distances
         for(int i = 0; i < nq; i++) {
             for(int j = 0; j < k; j++) {
                 ofs << words[I[i * k + j]] << " ";
+                dist_ofs << D[i * k + j] << " ";
             }
             ofs << std::endl;
+            dist_ofs << std::endl;
+
         }
         processed += nq;
         if (processed % 1000000 == 0) {
